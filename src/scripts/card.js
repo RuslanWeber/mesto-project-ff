@@ -1,4 +1,4 @@
-import '/Users/ruslanweber/Desktop/project mesto/src/pages/index.css';
+
 import { initialCards } from './cards';
 import {openModal, closeModal, popupEdit} from './modal.js'
 const cardList = document.querySelector('.places__list');

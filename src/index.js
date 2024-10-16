@@ -1,4 +1,4 @@
-import "/Users/ruslanweber/Desktop/project mesto/src/pages/index.css";
+import "../src/pages/index.css";
 import {addCards} from './scripts/card.js'
 import {openModal} from './scripts/modal.js'
 
