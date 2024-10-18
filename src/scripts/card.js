@@ -1,16 +1,21 @@
 
 import { initialCards } from './cards';
-import {openModal, closeModal, popupEdit} from './modal.js'
-const cardList = document.querySelector('.places__list');
-const popupTypeImage = document.querySelector(".popup_type_image");
-const popupImage = document.querySelector(".popup__image");
-const popupImageCaption = document.querySelector(".popup__caption");
-const popupNewCard = document.querySelector(".popup_type_new-card");
-const modalCardForm = document.querySelectorAll('.popup_type_new-card .popup__form');
-const cardInputName = document.querySelector('.popup__input_type_card-name');
-const cardInputLink = document.querySelector('.popup__input_type_url');
+// import { openModal} from './modal.js'
+import {openBigImagePopup} from '../index.js'
 
-function createCard(cardData, deleteCard) {
+const cardList = document.querySelector('.places__list');
+
+function deleteCard(card){
+    card.remove();
+};
+
+  //лайк карточки
+function likeCard (cardLikeButton) {
+    cardLikeButton.classList.toggle('card__like-button_is-active');
+}
+
+
+function createCard(cardData, deleteCard, likeCard, openBigImagePopup) {
     const cardTemplate = document.querySelector('#card-template').content;
     const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
     const cardImage = cardElement.querySelector ('.card__image');
@@ -35,42 +40,11 @@ function createCard(cardData, deleteCard) {
     return cardElement;
 };
 
-function deleteCard(card){
-    card.remove();
-};
-
 function addCards() {
     for (let i = 0; i < initialCards.length; i++) {
-        cardList.append(createCard(initialCards[i], deleteCard));
+        cardList.append(createCard(initialCards[i], deleteCard, likeCard, openBigImagePopup));
     }
 };
 
-  //просмотр изображения карточки
-function openBigImagePopup(cardInfo) { 
-    popupImage.src = cardInfo.currentSrc;
-    popupImage.alt = cardInfo.alt;
-    popupImageCaption.textContent = cardInfo.alt;
-    openModal(popupTypeImage);
-    console.log(popupImage);
-}
 
-
-  //лайк карточки
-function likeCard (cardLikeButton) {
-    cardLikeButton.classList.toggle('card__like-button_is-active');
-}
-
-//добавление карточки
-function handleAddCardFormSubmit(evt) {
-    evt.preventDefault();
-    // const cardName = cardInputName[0].value;
-    const cardName = cardInputName.value;
-    const cardLink = cardInputLink.value;
-    initialCards.unshift({name: cardName, link: cardLink}); 
-    cardList.prepend(createCard(initialCards[0], deleteCard));
-    closeModal(popupNewCard);
-    cardInputName.value = '';
-    cardInputLink.value = '';
-}
-modalCardForm[0].addEventListener('submit', handleAddCardFormSubmit);
-export { addCards }
+export {createCard, addCards, deleteCard, likeCard}
