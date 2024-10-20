@@ -1,19 +1,16 @@
-// import { createCard, deleteCard, likeCard, openBigImagePopup } from "./card";
-import { popupOverlayClose, popupEscClose, popupCloseButton } from '../index.js'
 
 // открытие модальных окон
 function openModal(popup) {
     popup.classList.add('popup_is-opened');
-    popupOverlayClose();
-    popupEscClose();
-    popupCloseButton();
-
+    popup.addEventListener('click', overlayClose);
+    document.addEventListener('keydown', closeByEscape);
+    document.addEventListener('click', closeButton);
 }
 
 function closeModal(popup) {
     popup.classList.remove('popup_is-opened');
     document.removeEventListener('keydown', closeByEscape);
-    document.removeEventListener('click', overlayClose);
+    // document.removeEventListener('click', overlayClose);
 
 }
 

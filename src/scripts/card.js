@@ -1,9 +1,4 @@
 
-import { initialCards } from './cards';
-// import { openModal} from './modal.js'
-import {openBigImagePopup} from '../index.js'
-
-const cardList = document.querySelector('.places__list');
 
 function deleteCard(card){
     card.remove();
@@ -40,11 +35,5 @@ function createCard(cardData, deleteCard, likeCard, openBigImagePopup) {
     return cardElement;
 };
 
-function addCards() {
-    for (let i = 0; i < initialCards.length; i++) {
-        cardList.append(createCard(initialCards[i], deleteCard, likeCard, openBigImagePopup));
-    }
-};
 
-
-export {createCard, addCards, deleteCard, likeCard}
+export {createCard, deleteCard, likeCard}
