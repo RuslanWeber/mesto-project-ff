@@ -10,8 +10,8 @@ function openModal(popup) {
 function closeModal(popup) {
     popup.classList.remove('popup_is-opened');
     document.removeEventListener('keydown', closeByEscape);
-    // document.removeEventListener('click', overlayClose);
-
+    document.removeEventListener('click', overlayClose);
+    document.removeEventListener('click', closeButton);
 }
 
 function overlayClose(evt) {
