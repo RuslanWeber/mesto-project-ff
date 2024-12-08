@@ -32,3 +32,7 @@
     width: 100%;
   }
 }
+
+.profile-avatar-error{
+  color: red;
+}
