@@ -8,52 +8,49 @@ export function enableValidation(config) {
 function setEventListeners(formElement, config) {
   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
   const submitButton = formElement.querySelector(config.submitButtonSelector);
-  const minLength = 2;
-  const maxLength = 40;
+
 
   toggleButtonState(inputList, submitButton);
 
   inputList.forEach((inputElement) => {
     inputElement.addEventListener('input', () => {
-      checkInputValidity(inputElement, config, minLength, maxLength);
+      checkInputValidity(inputElement, config);
       toggleButtonState(inputList, submitButton);
     });
   });
 }
 
-function checkInputValidity(inputElement, config, minLength = 2, maxLength = 40) {
-  const regex = /^[a-zA-Zа-яА-ЯёЁ -]+$/; // латиница, кириллица, дефис и пробелы
-  const errorElement = inputElement.nextElementSibling;
+function checkInputValidity(inputElement, config) {
 
-  inputElement.setCustomValidity("");
-
-  if (!inputElement.value) {
-    inputElement.setCustomValidity("Вы пропустили это поле.");
-  } else if (inputElement.type === "text" && (inputElement.value.length < minLength || inputElement.value.length > maxLength)) {
-    inputElement.setCustomValidity(`Длина должна быть от ${minLength} до ${maxLength} символов.`);
-  } else if (inputElement.type === "text" && !regex.test(inputElement.value)) {
-    inputElement.setCustomValidity("Поле может содержать только латинские и кириллические буквы, знаки defиса и пробелы.");
-  } else if (inputElement.type === "url" && !inputElement.validity.valid) {
-    inputElement.setCustomValidity("Введите адрес сайта.");
+  if (inputElement.validity.valueMissing) {
+    inputElement.setCustomValidity = inputElement.dataset.requiredError;
+  } else if (inputElement.validity.tooShort  || inputElement.validity.tooLong) {
+    inputElement.setCustomValidity = inputElement.dataset.lengthError;
+  } else if (inputElement.type === "text" && inputElement.validity.patternMismatch) {
+    inputElement.setCustomValidity = inputElement.dataset.patternError;
+  } else if (inputElement.type === "url" && !inputElement.validity.valueMissing) {
+    inputElement.setCustomValidity = inputElement.dataset.errorMessage;
   }
 
   if (!inputElement.validity.valid) {
-    showInputError(inputElement, errorElement, config);
+    showInputError(inputElement, config);
   } else {
-    hideInputError(inputElement, errorElement, config);
+    hideInputError(inputElement, config);
   }
 }
 
-function showInputError(inputElement, errorElement, config) {
+function showInputError(inputElement, config) {
   inputElement.classList.add(config.inputErrorClass);
-  errorElement.textContent = inputElement.validationMessage;
+  const errorElement = document.querySelector(`.${inputElement.id}-error`);
+  errorElement.textContent = inputElement.setCustomValidity;
   errorElement.classList.add(config.errorClass);
 }
 
-function hideInputError(inputElement, errorElement, config) {
-  inputElement.classList.remove(config.inputErrorClass);
+function hideInputError(inputElement) {
+  inputElement.classList.remove('popup__input_type_error');
+  const errorElement = document.querySelector(`.${inputElement.id}-error`);
   errorElement.textContent = '';
-  errorElement.classList.remove(config.errorClass);
+  errorElement.classList.remove('popup__error_visible');
 }
 
 function toggleButtonState(inputs, button) {
@@ -71,12 +68,7 @@ export function clearValidation(formElement) {
   const submitButton = formElement.querySelector('.popup__button');
 
   inputs.forEach((input) => {
-    input.classList.remove('popup__input_type_error');
-    
-    const errorElement = formElement.querySelector(`#${input.id}-error`);
-    if (errorElement) {
-      errorElement.textContent = '';
-    }
+    hideInputError(input);
   });
 
   submitButton.classList.add('popup__button_disabled');

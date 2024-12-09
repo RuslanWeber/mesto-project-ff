@@ -12,12 +12,12 @@ const popupAvatarEdit = document.querySelector('.popup_type_avatar_edit');
 
 const editButton = document.querySelector('.profile__edit-button');
 const addButton = document.querySelector('.profile__add-button');
-const popupEdit = document.querySelector('.popup_type_edit');
+const profileEdit = document.querySelector('.popup_type_edit');
 
 
-const popupForm = popupEdit.querySelector('.popup__form');
-const nameInput = popupEdit.querySelector('.popup__input_type_name');
-const jobInput = popupEdit.querySelector('.popup__input_type_description');
+// const popupForm = profileEdit.querySelector('.popup__form');
+const nameInput = profileEdit.querySelector('.popup__input_type_name');
+const jobInput = profileEdit.querySelector('.popup__input_type_description');
 
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
@@ -28,6 +28,8 @@ const linkInput = popupCard.querySelector('.popup__input_type_url');
 let  imagePopup = document.querySelector('.popup_type_image');
 const imageElement = imagePopup.querySelector('.popup__image');
 const titleElement = imagePopup.querySelector('.popup__caption');
+
+let userId;
 
 // Настройки валидации
 const validationConfig = {
@@ -40,77 +42,39 @@ const validationConfig = {
 
 
 function openImagePopup(title, link) {
-  
-  
   imageElement.src = link;
   imageElement.alt = title;
   titleElement.textContent = title;
-  
   openModal(imagePopup);
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadInitialData();
   enableValidation(validationConfig);
-  clearValidation(popupForm, validationConfig);
   setUpEventListeners();
 });
 
 
-let userId;
-
-function getUserId() {
-  return localStorage.getItem('userId');
-}
-
-function setUserId(id) {
-  localStorage.setItem('userId', id);
-}
-
-const initApp = async () => {
-  
-    const profileInfo = await getProfileInfo();
-    userId = profileInfo._id;
-    setUserId(userId); 
-    // console.log(`Получен userId: ${userId}`);
-    const cards = await getInitialCards();
-    renderCards(cards, userId, openImagePopup);
-
-  
-};
-
-
-initApp();
-const fetchedUserId = getUserId();
-
-if (!fetchedUserId) {
-    initApp();
-} else {
-    userId = fetchedUserId;
-    getInitialCards()
-        .then(cards => {
-            renderCards(cards, userId, openImagePopup);
-        })
-}
 async function loadInitialData() {
   try {
     const [userInfo, cards] = await Promise.all([getProfileInfo(), getInitialCards()]);
-    
+    userId = userInfo._id;
     profileTitle.textContent = userInfo.name;
     profileDescription.textContent = userInfo.about;
     document.querySelector('.profile__image').style.backgroundImage = `url('${userInfo.avatar}')`;
-
-    renderCards(cards, userInfo._id, openImagePopup);
+    renderCards(cards, userId, openImagePopup);
   } catch (error) {
     console.error("Ошибка:", error);
   }
 }
+
 // слушатели кнопок
 function setUpEventListeners() {
   editButton.addEventListener('click', () => {
     nameInput.value = profileTitle.textContent;
     jobInput.value = profileDescription.textContent;
-    openModal(popupEdit);
+    clearValidation(profileEdit);
+    openModal(profileEdit);
   });
 
   addButton.addEventListener('click', () => {
@@ -120,16 +84,15 @@ function setUpEventListeners() {
   });
 
   formNewCard.addEventListener('submit', handleNewCardSubmit);
-  popupForm.addEventListener('submit', handleProfileFormSubmit);
+  profileEdit.addEventListener('submit', handleProfileFormSubmit);
   popups.forEach(popup => setupPopupClose(popup));
 
   profileAvatarButton.addEventListener('click', () => {
     const formElement = popupAvatarEdit.querySelector('.popup__form');
     clearValidation(formElement);
     openModal(popupAvatarEdit);
-    console.log('q')
   });
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   const avatarForm = document.querySelector('.popup__form[name="edit-avatar"]');
   avatarForm.addEventListener('submit', handleAvatarFormSubmit);
 }
@@ -144,15 +107,27 @@ async function handleAvatarFormSubmit(evt) {
 
   try {
     const newAvatarUrl = document.getElementById('profile-avatar').value; 
-    await updateAvatar(newAvatarUrl); 
-    closeModal(popupAvatarEdit); 
+    await avatarUpdate(newAvatarUrl);
+    console.log('Аватар успешно обновлён!');
+    document.querySelector('.profile__image').style.backgroundImage = `url('${newAvatarUrl}')`;
+    
   } catch (error) {
     console.error("Ошибка :", error);
   } finally {
     submitButton.textContent = initialText;
+    closeModal(popupAvatarEdit);
   }
 }
 
+// const updateAvatar = async (newAvatarUrl) => {
+//   try {
+//     const result = await avatarUpdate(newAvatarUrl);
+//     console.log('Аватар успешно обновлён!', result);
+//     document.querySelector('.profile__image').style.backgroundImage = `url('${newAvatarUrl}')`;
+//   } catch (error) {
+//     console.error('Ошибка:', error);
+//   }
+// };
 // Обработчик отправки формы профиля
 async function handleProfileFormSubmit(evt) {
   evt.preventDefault();
@@ -164,7 +139,7 @@ async function handleProfileFormSubmit(evt) {
     const updatedUserInfo = await updateProfileInfo(nameInput.value, jobInput.value);
     profileTitle.textContent = updatedUserInfo.name;
     profileDescription.textContent = updatedUserInfo.about;
-    closeModal(popupEdit);
+    closeModal(profileEdit);
   } catch (error) {
     console.error("Ошибка:", error);
   } finally {
@@ -191,16 +166,6 @@ async function handleNewCardSubmit(evt) {
     submitButton.textContent = initialText; 
   }
 }
-
-const updateAvatar = async (newAvatarUrl) => {
-  try {
-    const result = await avatarUpdate(newAvatarUrl);
-    console.log('Аватар успешно обновлён!', result);
-    document.querySelector('.profile__image').style.backgroundImage = `url('${newAvatarUrl}')`;
-  } catch (error) {
-    console.error('Ошибка:', error);
-  }
-};
 
 // Рендеринг карточек
 function renderCards(cards) {
@@ -236,4 +201,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Инициализация валидации
 enableValidation(validationConfig);
-clearValidation(popupForm, validationConfig);
+clearValidation(profileEdit, validationConfig);

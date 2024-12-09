@@ -10,11 +10,19 @@ function handleLike(cardId, likeButton, likeCounter) {
       likeButton.classList.toggle("card__like-button_is-active");
       likeCounter.textContent = data.likes.length; 
     })
+    .catch(error => {
+      console.error('Ошибка при лайке карточки:', error);
+    });
 }
 
 function deleteCard(cardId, cardElement) {
-  deleteCardFromServer(cardId) 
-    cardElement.remove(); 
+  deleteCardFromServer(cardId)
+    .then(() => {
+      cardElement.remove(); 
+    })
+    .catch(error => {
+      console.error("Ошибка при удалении карточки:", error);
+    });
 }
 
 function handleDeleteButtonClick(cardId, cardElement) {

@@ -1,13 +1,13 @@
-// const config = {
-//   cohortId: 'wff-cohort-25',
-//   baseUrl: 'https://nomoreparties.co/v1/',
-//   headers: {
-//     authorization: '503df497-9af6-43ef-8dd4-c222ed80b4e1',
-//     'Content-Type': 'application/json'
-//   }
-// };
+const config = {
+  cohortId: 'wff-cohort-25',
+  baseUrl: 'https://nomoreparties.co/v1/',
+  headers: {
+    authorization: '503df497-9af6-43ef-8dd4-c222ed80b4e1',
+    'Content-Type': 'application/json'
+  }
+};
 
-// const url = `${config.baseUrl}${config.cohortId}`;
+const url = `${config.baseUrl}${config.cohortId}`;
 
 const handleResponse = async (response) => {
   if (response.ok) {
@@ -18,83 +18,66 @@ const handleResponse = async (response) => {
 };
 // делаем запрос карточкам на сервере
 export const getInitialCards = () => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-25/cards', {
-    headers: {
-      authorization: '503df497-9af6-43ef-8dd4-c222ed80b4e1',
-      'Content-Type': 'application/json'
-    }
+  return fetch(`${url}/cards`, {
+    headers: config.headers
   }).then(handleResponse);
 };
 // делаем запрос о профиле
 export const getProfileInfo = () => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-25/users/me', {
-    headers: {
-      authorization: '503df497-9af6-43ef-8dd4-c222ed80b4e1',
-      'Content-Type': 'application/json'
-    }
+  return fetch(`${url}/users/me`, {
+    headers: config.headers
   }).then(handleResponse);
 };
 // обновляем информацию о профиле
 export const updateProfileInfo = (name, about) => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-25/users/me', {
+  return fetch(`${url}/users/me`, {
     method: 'PATCH',
-    headers: {
-      authorization: '503df497-9af6-43ef-8dd4-c222ed80b4e1',
-      'Content-Type': 'application/json'
-    },
+    headers: config.headers,
     body: JSON.stringify({ name, about })
   }).then(handleResponse);
 };
 // добавляем новую карточку 
 export const addCardToServer = (name, link) => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-25/cards', {
+  return fetch(`${url}/cards`, {
     method: 'POST',
-    headers: {
-      authorization: '503df497-9af6-43ef-8dd4-c222ed80b4e1',
-      'Content-Type': 'application/json'
-    },
+    headers: config.headers,
     body: JSON.stringify({ name, link })
   }).then(handleResponse);
 };
 // устанавливаем лайк карточке
 export const addLike = (cardId) => {
-  return fetch(`https://nomoreparties.co/v1/wff-cohort-25/cards/likes/${cardId}`, {
+  return fetch(`${url}/cards/likes/${cardId}`, {
     method: 'PUT',
-    headers: {
-      authorization: '503df497-9af6-43ef-8dd4-c222ed80b4e1',
-      'Content-Type': 'application/json'
-    }
+    headers: config.headers
   }).then(handleResponse);
 };
 // удаляем лайк карточке
 export const removeLike = (cardId) => {
-  return fetch(`https://nomoreparties.co/v1/wff-cohort-25/cards/likes/${cardId}`, {
+  return fetch(`${url}/cards/likes/${cardId}`, {
     method: 'DELETE',
-    headers: {
-      authorization: '503df497-9af6-43ef-8dd4-c222ed80b4e1',
-      'Content-Type': 'application/json'
-    }
+    headers: config.headers
   }).then(handleResponse);
 };
 // удаляем карточку
 export const deleteCardFromServer = (cardId) => {
-  return fetch(`https://nomoreparties.co/v1/wff-cohort-25/cards/${cardId}`, {
+  return fetch(`${url}/cards/${cardId}`, {
     method: 'DELETE',
-    headers: {
-      authorization: '503df497-9af6-43ef-8dd4-c222ed80b4e1',
-      'Content-Type': 'application/json'
-    }
+    headers: config.headers
   }).then(handleResponse);
 };
 // меняем аватарку
-export const avatarUpdate = async (newAvatarUrl) => {
-  const response = await fetch('https://nomoreparties.co/v1/wff-cohort-25/users/me/avatar', {
+// export const avatarUpdate = async (newAvatarUrl) => {
+//   const response = await fetch(`${url}/users/me/avatar`, {
+//     method: 'PATCH',
+//     headers: config.headers,
+//     body: JSON.stringify({ avatar: newAvatarUrl })
+//   });
+//   return await handleResponse(response);
+// };
+export const avatarUpdate = (newAvatarUrl) => {
+  return fetch(`${url}/users/me/avatar`, {
     method: 'PATCH',
-    headers: {
-      authorization: '503df497-9af6-43ef-8dd4-c222ed80b4e1',
-      'Content-Type': 'application/json'
-    },
+    headers: config.headers,
     body: JSON.stringify({ avatar: newAvatarUrl })
-  });
-  return await handleResponse(response);
+  }).then(handleResponse);
 };
