@@ -190,15 +190,3 @@ function setupPopupClose(popup) {
     }
   });
 }
-
-// Слушатель события для открытия попапа с изображением
-document.addEventListener('DOMContentLoaded', () => {
-  document.addEventListener('openPopup', (event) => {
-    const { link, name } = event.detail;
-    openImagePopup(name, link);
-  });
-});
-
-// Инициализация валидации
-enableValidation(validationConfig);
-clearValidation(profileEdit, validationConfig);
