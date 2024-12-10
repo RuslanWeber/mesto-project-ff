@@ -15,7 +15,7 @@ const addButton = document.querySelector('.profile__add-button');
 const profileEdit = document.querySelector('.popup_type_edit');
 
 
-// const popupForm = profileEdit.querySelector('.popup__form');
+const profileForm = profileEdit.querySelector('.popup__form');
 const nameInput = profileEdit.querySelector('.popup__input_type_name');
 const jobInput = profileEdit.querySelector('.popup__input_type_description');
 
@@ -58,11 +58,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadInitialData() {
   try {
     const [userInfo, cards] = await Promise.all([getProfileInfo(), getInitialCards()]);
-    userId = userInfo._id;
     profileTitle.textContent = userInfo.name;
     profileDescription.textContent = userInfo.about;
     document.querySelector('.profile__image').style.backgroundImage = `url('${userInfo.avatar}')`;
-    renderCards(cards, userId, openImagePopup);
+    renderCards(cards);
   } catch (error) {
     console.error("Ошибка:", error);
   }
@@ -73,7 +72,7 @@ function setUpEventListeners() {
   editButton.addEventListener('click', () => {
     nameInput.value = profileTitle.textContent;
     jobInput.value = profileDescription.textContent;
-    clearValidation(profileEdit);
+    clearValidation(profileForm);
     openModal(profileEdit);
   });
 
@@ -84,7 +83,7 @@ function setUpEventListeners() {
   });
 
   formNewCard.addEventListener('submit', handleNewCardSubmit);
-  profileEdit.addEventListener('submit', handleProfileFormSubmit);
+  profileForm.addEventListener('submit', handleProfileFormSubmit);
   popups.forEach(popup => setupPopupClose(popup));
 
   profileAvatarButton.addEventListener('click', () => {
@@ -110,25 +109,14 @@ async function handleAvatarFormSubmit(evt) {
     await avatarUpdate(newAvatarUrl);
     console.log('Аватар успешно обновлён!');
     document.querySelector('.profile__image').style.backgroundImage = `url('${newAvatarUrl}')`;
-    
+    closeModal(popupAvatarEdit);
   } catch (error) {
     console.error("Ошибка :", error);
   } finally {
     submitButton.textContent = initialText;
-    closeModal(popupAvatarEdit);
   }
 }
 
-// const updateAvatar = async (newAvatarUrl) => {
-//   try {
-//     const result = await avatarUpdate(newAvatarUrl);
-//     console.log('Аватар успешно обновлён!', result);
-//     document.querySelector('.profile__image').style.backgroundImage = `url('${newAvatarUrl}')`;
-//   } catch (error) {
-//     console.error('Ошибка:', error);
-//   }
-// };
-// Обработчик отправки формы профиля
 async function handleProfileFormSubmit(evt) {
   evt.preventDefault();
   const submitButton = evt.target.querySelector('.popup__button');
@@ -170,7 +158,7 @@ async function handleNewCardSubmit(evt) {
 // Рендеринг карточек
 function renderCards(cards) {
   cards.forEach(card => {
-    const cardElement = createCard(card,userId, openImagePopup);
+    const cardElement = createCard(card, userId, openImagePopup);
     placesList.append(cardElement);
   });
 }
